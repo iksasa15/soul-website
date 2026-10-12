@@ -1,0 +1,459 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ───────────────────────── Tokens ─────────────────────────
+   Built from the two logo colours: navy #00416B and sky #00AEEF. */
+:root {
+  --bg: #f3f7fc;
+  --bg-soft: #e8f0f9;
+  --card: #ffffff;
+  --fg: #052340;
+  --muted: #44607c;
+  --subtle: #7a90a8;
+  --line: #d3e1f0;
+  --line-strong: #b4cbe3;
+  --navy: #00416b;
+  --sky: #00aeef;
+  --accent: #0077c8;
+  --glow: 0 174 239;
+  --grid: rgb(0 65 107 / 0.07);
+  --shadow: 0 1px 2px rgb(5 35 64 / 0.06), 0 12px 32px -12px rgb(5 35 64 / 0.18);
+  --logo-text: #00416b;
+  --logo-tagline: #00aeef;
+  --logo-sky: #00aeef;
+  --logo-navy: #00416b;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #020a1a;
+  --bg-soft: #041329;
+  --card: #071a36;
+  --fg: #eaf4ff;
+  --muted: #9cb4cf;
+  --subtle: #6a83a2;
+  --line: #6eaaff21;
+  --line-strong: #6eaaff42;
+  --accent: #38c0f7;
+  --grid: rgb(120 180 255 / 0.055);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 18px 40px -16px rgb(0 0 0 / 0.6);
+  --logo-text: #ffffff;
+  --logo-tagline: #29b6f0;
+  --logo-sky: #00aeef;
+  --logo-navy: #1166a8;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-soft: var(--bg-soft);
+  --color-card: var(--card);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-navy: var(--navy);
+  --color-sky: var(--sky);
+  --color-accent: var(--accent);
+  --color-stage: #031029;
+  --font-sans: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-readex), var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+  --shadow-soft: var(--shadow);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ───────────────────────── Base ───────────────────────── */
+@layer base {
+  html {
+    overflow-x: clip;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+  :lang(ar) body {
+    line-height: 1.85;
+  }
+  :lang(en) body {
+    line-height: 1.65;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: rgb(var(--glow) / 0.3);
+  }
+  :focus-visible {
+    outline: 2px solid var(--sky);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+/* ───────────────────────── Utilities ───────────────────────── */
+@utility container-x {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility glass {
+  background: color-mix(in oklab, var(--card) 70%, transparent);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid var(--line);
+}
+
+@utility text-gradient {
+  background: linear-gradient(100deg, var(--sky) 0%, #3b8cff 55%, var(--sky) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-pan 8s ease-in-out infinite;
+}
+
+@utility bg-grid {
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+@utility mask-fade-y {
+  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+}
+
+@utility mask-radial {
+  mask-image: radial-gradient(ellipse at center, black 35%, transparent 72%);
+}
+
+@utility stage {
+  background:
+    radial-gradient(120% 90% at 50% 0%, #0b3a7a 0%, transparent 60%),
+    radial-gradient(80% 60% at 50% 100%, #00aeef22 0%, transparent 70%),
+    linear-gradient(180deg, #062152 0%, #020b1f 100%);
+  color: #eaf4ff;
+}
+
+/* Glass widgets placed on the always-dark product stage stay dark in light mode too. */
+.stage .glass {
+  background: rgb(2 10 26 / 0.55);
+  border-color: rgb(255 255 255 / 0.14);
+  color: #eaf4ff;
+}
+.stage .glass .text-muted {
+  color: rgb(234 244 255 / 0.62);
+}
+
+/* Mouse-following glow for cards (set --mx/--my from JS). */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, -20%), rgb(var(--glow) / 0.14), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  z-index: -1;
+  pointer-events: none;
+}
+.spotlight:hover::before {
+  opacity: 1;
+}
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(300px circle at var(--mx, 50%) var(--my, -20%), rgb(var(--glow) / 0.65), transparent 50%);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.spotlight:hover::after {
+  opacity: 1;
+}
+
+/* ───────────────────────── Intro splash ───────────────────────── */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(60% 50% at 50% 45%, #0b3a7a 0%, transparent 70%),
+    #020a1a;
+  animation: intro-out 0.7s cubic-bezier(0.65, 0, 0.35, 1) 1.65s forwards;
+}
+[data-intro="done"] .intro {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro {
+    display: none;
+  }
+}
+.intro-piece {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: piece-in 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--delay, 0s);
+}
+.intro-word {
+  animation: word-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both;
+}
+.intro-tag {
+  animation: word-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.95s both;
+}
+.intro-ring {
+  animation: ring-out 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
+}
+
+/* Hero entrance — waits for the intro on first visit. */
+html:not([data-intro="done"]) .hero-anim {
+  --intro-delay: 1.55s;
+}
+.hero-anim {
+  animation: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--d, 0s) + var(--intro-delay, 0s));
+}
+
+/* ───────────────────────── Keyframes ───────────────────────── */
+@keyframes gradient-pan {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+@keyframes piece-in {
+  from {
+    opacity: 0;
+    transform: translate(var(--dx, 0), var(--dy, 0)) rotate(var(--r, 0deg)) scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes word-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes ring-out {
+  from {
+    opacity: 0.9;
+    transform: scale(0.3);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+@keyframes intro-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes marquee-rtl {
+  to {
+    transform: translateX(50%);
+  }
+}
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+@keyframes blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes wave-out {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+.animate-pulse-ring {
+  animation: pulse-ring 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.animate-spin-slow {
+  animation: spin-slow 40s linear infinite;
+}
+.animate-blink {
+  animation: blink 1.6s ease-in-out infinite;
+}
+.animate-wave {
+  animation: wave-out 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.marquee-track {
+  animation: marquee 38s linear infinite;
+}
+[dir="rtl"] .marquee-track {
+  animation-name: marquee-rtl;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Current pulses travelling along circuit traces. */
+.trace-pulse {
+  stroke-dasharray: 60 940;
+  stroke-dashoffset: 1000;
+  animation: dash-flow 6s linear infinite;
+}
+
+/* Circular theme-switch reveal (driven from ThemeToggle). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Range slider with a filled track (set --pct from JS). */
+.range {
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--sky) var(--pct, 50%), var(--line) var(--pct, 50%));
+  cursor: pointer;
+}
+[dir="rtl"] .range {
+  background: linear-gradient(to left, var(--sky) var(--pct, 50%), var(--line) var(--pct, 50%));
+}
+.range::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid var(--sky);
+  box-shadow: 0 0 0 6px rgb(0 174 239 / 0.15), 0 4px 10px rgb(0 0 0 / 0.2);
+  transition: transform 0.2s;
+}
+.range::-webkit-slider-thumb:hover {
+  transform: scale(1.12);
+}
+.range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid var(--sky);
+  box-shadow: 0 0 0 6px rgb(0 174 239 / 0.15);
+}
