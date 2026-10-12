@@ -1,13 +1,14 @@
 import { Building2, Mail, MapPin } from "lucide-react";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { CopyEmail } from "@/components/contact/CopyEmail";
+import { SocialLinks } from "@/components/brand/SocialLinks";
 import { Hexagon } from "@/components/ui/Hexagon";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CONTACT_EMAIL } from "@/data/projects";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
-export function Contact({ contact }: { contact: Dictionary["contact"] }) {
+export function Contact({ contact, social }: { contact: Dictionary["contact"]; social: Dictionary["social"] }) {
   return (
     <section id="contact" className="relative overflow-hidden py-24 sm:py-32">
       <div className="absolute top-0 left-1/2 -z-10 size-[50rem] -translate-x-1/2 rounded-full bg-sky/[0.07] blur-3xl" aria-hidden />
@@ -49,6 +50,12 @@ export function Contact({ contact }: { contact: Dictionary["contact"] }) {
                   <p className="text-xs text-muted">{contact.sectorLabel}</p>
                   <p className="font-semibold">{contact.sector}</p>
                 </div>
+              </div>
+            </Reveal>
+            <Reveal delay={0.18}>
+              <div className="glass flex flex-wrap items-center justify-between gap-4 rounded-2xl p-5">
+                <p className="font-semibold">{social.title}</p>
+                <SocialLinks labels={social} variant="buttons" />
               </div>
             </Reveal>
           </div>

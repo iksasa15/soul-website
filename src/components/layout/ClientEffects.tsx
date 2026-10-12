@@ -1,10 +1,26 @@
 "use client";
 
 import { MotionConfig } from "motion/react";
+import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 
-/** Global client behaviour: reduced-motion support and the card spotlight glow. */
+/** Global client behaviour: reduced-motion support, the card spotlight glow and URL tidying. */
 export function ClientEffects({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+
+  // After arriving at a section (e.g. /ar#contact or ?topic=…), drop the hash and topic
+  // from the URL so a reload or a reopened tab starts at the hero again.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (!url.hash && !url.searchParams.has("topic")) return;
+    const t = window.setTimeout(() => {
+      url.hash = "";
+      url.searchParams.delete("topic");
+      window.history.replaceState(null, "", url.pathname + url.search);
+    }, 1500);
+    return () => window.clearTimeout(t);
+  }, [pathname]);
+
   useEffect(() => {
     let frame = 0;
     const onMove = (e: PointerEvent) => {

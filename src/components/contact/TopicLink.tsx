@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { SectionLink } from "@/components/layout/SectionLink";
 import type { Locale } from "@/i18n/config";
 
 export const TOPIC_EVENT = "soul:topic";
@@ -22,12 +22,12 @@ export function TopicLink({
   const pathname = usePathname();
   const onHome = pathname === `/${locale}`;
   return (
-    <Link
+    <SectionLink
       href={onHome ? "#contact" : `/${locale}?topic=${topic}#contact`}
       className={className}
       onClick={() => window.dispatchEvent(new CustomEvent(TOPIC_EVENT, { detail: topic }))}
     >
       {children}
-    </Link>
+    </SectionLink>
   );
 }

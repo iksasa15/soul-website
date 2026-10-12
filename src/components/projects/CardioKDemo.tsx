@@ -6,6 +6,7 @@ import { useState } from "react";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { cn } from "@/lib/cn";
 import { useVisibleInterval } from "@/lib/use-visible-interval";
+import { CareTeamPanel } from "./CareTeamPanel";
 
 type Scenario = "normal" | "high" | "low";
 type Risk = "low" | "medium" | "high";
@@ -16,6 +17,8 @@ const MIN = 2.5;
 const MAX = 6.5;
 const NORMAL: [number, number] = [3.5, 5.0];
 const TARGET: Record<Scenario, number> = { normal: 4.2, high: 6.1, low: 2.95 };
+
+const isDrifting = (scenario: Scenario, v: number) => scenario !== "normal" && Math.abs(v - 4.2) > 0.35;
 
 const initialSeries = () => Array.from({ length: POINTS }, (_, i) => 4.2 + Math.sin(i / 2.5) * 0.07 + Math.cos(i / 1.3) * 0.03);
 
@@ -100,17 +103,18 @@ function Trend({ series, risk }: { series: number[]; risk: Risk }) {
 export function CardioKDemo({ t, simulated }: { t: T; simulated: string }) {
   const [scenario, setScenario] = useState<Scenario>("normal");
   const [series, setSeries] = useState(initialSeries);
+  // How many ticks the reading has been outside the stable band; drives the care-team requests.
+  const [driftTicks, setDriftTicks] = useState(0);
 
   const ref = useVisibleInterval(
     () => {
-      setSeries((s) => {
-        const last = s[s.length - 1];
-        const target = TARGET[scenario];
-        const pull = scenario === "normal" ? 0.22 : 0.07;
-        const noise = (Math.random() - 0.5) * (scenario === "normal" ? 0.08 : 0.06);
-        const next = last + (target - last) * pull + noise;
-        return [...s.slice(1), Math.min(MAX - 0.05, Math.max(MIN + 0.05, next))];
-      });
+      const last = series[series.length - 1];
+      const target = TARGET[scenario];
+      const pull = scenario === "normal" ? 0.22 : 0.07;
+      const noise = (Math.random() - 0.5) * (scenario === "normal" ? 0.08 : 0.06);
+      const next = Math.min(MAX - 0.05, Math.max(MIN + 0.05, last + (target - last) * pull + noise));
+      setSeries((s) => [...s.slice(1), next]);
+      setDriftTicks((d) => (isDrifting(scenario, next) ? d + 1 : 0));
     },
     700,
     { respectReducedMotion: false },
@@ -118,7 +122,10 @@ export function CardioKDemo({ t, simulated }: { t: T; simulated: string }) {
 
   const value = series[series.length - 1];
   const risk = riskOf(value);
-  const drifting = scenario !== "normal" && Math.abs(value - 4.2) > 0.35;
+  const drifting = isDrifting(scenario, value);
+  const care = t.careTeam;
+  const shownRequests = driftTicks < 1 ? 0 : Math.min(care.requests.length, 1 + Math.floor((driftTicks - 1) / 2));
+  const requests = care.requests.slice(0, shownRequests).map((r) => ({ text: r.text, role: care.roles[r.role], state: "done" as const }));
   const statusKey: Scenario = drifting ? scenario : "normal";
   const alertTone: Risk = drifting ? (risk === "low" ? "medium" : risk) : "low";
   const style = RISK_STYLE[alertTone];
@@ -189,6 +196,16 @@ export function CardioKDemo({ t, simulated }: { t: T; simulated: string }) {
             </span>
           </li>
         </ul>
+        <CareTeamPanel
+          className="mt-3"
+          title={care.title}
+          status={care.status}
+          roles={care.roles}
+          requestsTitle={care.requestsTitle}
+          requests={requests}
+          idle={care.idle}
+          doneLabel={care.sent}
+        />
         <p className="mt-6 text-xs text-subtle">{simulated}</p>
       </div>
 

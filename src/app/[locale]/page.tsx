@@ -32,7 +32,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       <Achievements locale={locale} achievements={dict.achievements} />
       <Team team={dict.team} />
       <Partnerships locale={locale} partnerships={dict.partnerships} />
-      <Contact contact={dict.contact} />
+      <Contact contact={dict.contact} social={dict.social} />
     </>
   );
 }

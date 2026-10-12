@@ -5,6 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { cn } from "@/lib/cn";
 import { useVisibleInterval } from "@/lib/use-visible-interval";
+import { CareTeamPanel, type CareRequest } from "./CareTeamPanel";
+
+// Which connected specialist sends each request: ICU physician, respiratory therapist, emergency consultant.
+const REQUEST_ROLES = [0, 2, 1];
 
 type T = Dictionary["neoMove"]["monitor"];
 
@@ -131,6 +135,17 @@ export function VitalsMonitor({ t, simulated }: { t: T; simulated: string }) {
   const temp = (36.9 + wobble(6, 0.1)).toFixed(1);
   const eta = 12 - (Math.floor(tick / 5) % 12);
 
+  // Once the AI flags the change, the remote doctors and experts request the essentials one by one;
+  // they stay listed (confirmed) until the next alert.
+  const care = t.careTeam;
+  const inAlert = cycle >= 8;
+  const shown = tick < 8 ? 0 : inAlert ? Math.min(care.requests.length, cycle - 7) : care.requests.length;
+  const requests: CareRequest[] = care.requests.slice(0, shown).map((text, i) => ({
+    text,
+    role: care.roles[REQUEST_ROLES[i] ?? 0],
+    state: inAlert && cycle - 8 - i < 2 ? "pending" : "done",
+  }));
+
   return (
     <div ref={ref} className="stage overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_50px_100px_-40px_rgb(2_10_26/0.7)]">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-3 text-xs sm:px-7">
@@ -191,6 +206,18 @@ export function VitalsMonitor({ t, simulated }: { t: T; simulated: string }) {
           <Headset className="size-4 text-sky" aria-hidden />
           {t.remote}
         </span>
+      </div>
+      <div className="border-t border-white/10 p-4 sm:p-6">
+        <CareTeamPanel
+          title={care.title}
+          status={care.status}
+          roles={care.roles}
+          requestsTitle={care.requestsTitle}
+          requests={requests}
+          idle={care.idle}
+          pendingLabel={care.pending}
+          doneLabel={care.confirmed}
+        />
       </div>
       <p className="border-t border-white/10 px-5 py-2.5 text-[11px] text-white/45 sm:px-7">{simulated}</p>
     </div>

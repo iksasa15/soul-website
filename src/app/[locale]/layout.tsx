@@ -8,7 +8,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { InlineScript } from "@/components/layout/InlineScript";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
-import { CONTACT_EMAIL } from "@/data/projects";
+import { CONTACT_EMAIL, SOCIAL_LINKS } from "@/data/projects";
 import { dirOf, hasLocale, locales, siteUrl } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 
@@ -57,8 +57,10 @@ export const viewport: Viewport = {
   colorScheme: "light dark",
 };
 
-// Runs before first paint: applies the saved/system theme and skips the intro for the rest of the session.
-const bootScript = `(function(){try{var e=document.documentElement,t=localStorage.getItem("soul-theme"),d=t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches;e.classList.toggle("dark",d);e.style.colorScheme=d?"dark":"light";if(sessionStorage.getItem("soul-intro"))e.dataset.intro="done"}catch(_){}})()`;
+// Runs before first paint: applies the saved/system theme, skips the intro for the rest of the
+// session, and (unless the URL targets a section or it's a back/forward visit) opens at the hero
+// instead of the browser's remembered scroll position.
+const bootScript = `(function(){try{var e=document.documentElement,t=localStorage.getItem("soul-theme"),d=t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches;e.classList.toggle("dark",d);e.style.colorScheme=d?"dark":"light";if(sessionStorage.getItem("soul-intro"))e.dataset.intro="done"}catch(_){}try{var h=history,n=performance.getEntriesByType("navigation")[0];if("scrollRestoration"in h){addEventListener("pagehide",function(){h.scrollRestoration="manual"});if(!location.hash&&(!n||n.type!=="back_forward")){h.scrollRestoration="manual";addEventListener("load",function(){setTimeout(function(){h.scrollRestoration="auto"},400)})}}}catch(_){}})()`;
 
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
@@ -74,6 +76,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
     url: `${siteUrl}/${locale}`,
     logo: `${siteUrl}/logo.svg`,
     email: CONTACT_EMAIL,
+    sameAs: Object.values(SOCIAL_LINKS),
     foundingDate: "2019",
     founder: { "@type": "Person", name: dict.team.founder.name },
     address: { "@type": "PostalAddress", addressCountry: "OM" },
@@ -95,7 +98,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
         <IntroSplash label={dict.intro.label} />
         <ClientEffects>
           <ScrollProgress />
-          <Header locale={locale} nav={dict.nav} projects={dict.projects.items} />
+          <Header locale={locale} nav={dict.nav} projects={dict.projects.items} social={dict.social} />
           <main id="main">{children}</main>
           <Footer locale={locale} dict={dict} />
         </ClientEffects>

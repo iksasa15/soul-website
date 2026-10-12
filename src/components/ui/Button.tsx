@@ -1,6 +1,6 @@
-import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { SectionLink } from "@/components/layout/SectionLink";
 import { cn } from "@/lib/cn";
 
 type Variant = "primary" | "secondary" | "ghost";
@@ -12,7 +12,7 @@ const styles: Record<Variant, string> = {
   ghost: "text-accent hover:text-fg px-1",
 };
 
-type Props = Omit<ComponentProps<typeof Link>, "className"> & {
+type Props = Omit<ComponentProps<typeof SectionLink>, "className"> & {
   variant?: Variant;
   className?: string;
   icon?: boolean;
@@ -21,7 +21,7 @@ type Props = Omit<ComponentProps<typeof Link>, "className"> & {
 
 export function ButtonLink({ variant = "primary", className, icon = true, children, ...props }: Props) {
   return (
-    <Link
+    <SectionLink
       {...props}
       className={cn(
         "group inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-all duration-300 ease-out-expo",
@@ -32,7 +32,7 @@ export function ButtonLink({ variant = "primary", className, icon = true, childr
     >
       {children}
       {icon && <DirArrow className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5 ltr:group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />}
-    </Link>
+    </SectionLink>
   );
 }
 

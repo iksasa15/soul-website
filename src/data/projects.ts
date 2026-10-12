@@ -27,3 +27,8 @@ export const galleryImages = [
 ] as const;
 
 export const CONTACT_EMAIL = "soulcompany.om@gmail.com";
+
+export const SOCIAL_LINKS = {
+  instagram: "https://www.instagram.com/soul__om/",
+  linkedin: "https://www.linkedin.com/company/soul-company-oman/",
+} as const;

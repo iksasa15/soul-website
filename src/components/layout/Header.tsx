@@ -6,12 +6,14 @@ import { AnimatePresence, motion } from "motion/react";
 import { ChevronDown, Mail, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
+import { SocialLinks } from "@/components/brand/SocialLinks";
 import { DirArrow } from "@/components/ui/Button";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { CONTACT_EMAIL, projectSlugs } from "@/data/projects";
 import { cn } from "@/lib/cn";
 import { LanguageSwitch } from "./LanguageSwitch";
+import { SectionLink } from "./SectionLink";
 import { ThemeToggle } from "./ThemeToggle";
 import { ProjectGlyph } from "./ProjectGlyph";
 
@@ -19,11 +21,12 @@ type Props = {
   locale: Locale;
   nav: Dictionary["nav"];
   projects: Dictionary["projects"]["items"];
+  social: Dictionary["social"];
 };
 
 const SECTIONS = ["about", "projects", "initiatives", "achievements", "team", "partnerships"] as const;
 
-export function Header({ locale, nav, projects }: Props) {
+export function Header({ locale, nav, projects, social }: Props) {
   const pathname = usePathname();
   const home = `/${locale}`;
   const isHome = pathname === home;
@@ -94,16 +97,16 @@ export function Header({ locale, nav, projects }: Props) {
               scrolled ? "glass shadow-soft" : "border border-transparent",
             )}
           >
-            <Link href={home} className="flex shrink-0 items-center" aria-label={`SOUL — ${nav.home}`}>
+            <SectionLink href={home} className="flex shrink-0 items-center" aria-label={`SOUL — ${nav.home}`}>
               <Logo className="h-9 w-auto sm:h-10" />
-            </Link>
+            </SectionLink>
 
             <nav aria-label={nav.menu} className="hidden lg:block">
               <ul className="flex items-center gap-0.5 text-[0.9rem] font-medium">
                 {SECTIONS.map((id) =>
                   id === "projects" ? (
                     <li key={id} className="group relative">
-                      <Link
+                      <SectionLink
                         href={href(id)}
                         className={cn(
                           "flex items-center gap-1 rounded-full px-3 py-2 transition-colors hover:text-accent",
@@ -112,7 +115,7 @@ export function Header({ locale, nav, projects }: Props) {
                       >
                         {labels[id]}
                         <ChevronDown className="size-3.5 transition-transform duration-300 group-focus-within:rotate-180 group-hover:rotate-180" aria-hidden />
-                      </Link>
+                      </SectionLink>
                       <div className="invisible absolute top-full pt-3 opacity-0 transition-all duration-300 group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100 ltr:left-1/2 ltr:-translate-x-1/2 rtl:right-1/2 rtl:translate-x-1/2">
                         <div className="glass w-[22rem] rounded-2xl p-2 shadow-soft">
                           {projectSlugs.map((slug) => (
@@ -135,7 +138,7 @@ export function Header({ locale, nav, projects }: Props) {
                     </li>
                   ) : (
                     <li key={id}>
-                      <Link
+                      <SectionLink
                         href={href(id)}
                         className={cn(
                           "relative rounded-full px-3 py-2 transition-colors hover:text-accent",
@@ -146,7 +149,7 @@ export function Header({ locale, nav, projects }: Props) {
                         {current === id && (
                           <motion.span layoutId="nav-dot" className="absolute -bottom-0.5 left-1/2 size-1 -translate-x-1/2 rounded-full bg-sky" />
                         )}
-                      </Link>
+                      </SectionLink>
                     </li>
                   ),
                 )}
@@ -162,12 +165,12 @@ export function Header({ locale, nav, projects }: Props) {
                 className="hidden sm:inline-flex"
               />
               <ThemeToggle toLight={nav.themeToLight} toDark={nav.themeToDark} />
-              <Link
+              <SectionLink
                 href={href("contact")}
                 className="hidden h-10 items-center gap-2 rounded-full bg-gradient-to-br from-sky to-[#0a6fd6] px-5 text-sm font-semibold text-white shadow-[0_8px_24px_-10px_rgb(0_174_239/0.8)] transition-transform hover:-translate-y-0.5 md:inline-flex"
               >
                 {nav.cta}
-              </Link>
+              </SectionLink>
               <button
                 type="button"
                 onClick={() => setOpen(true)}
@@ -222,14 +225,14 @@ export function Header({ locale, nav, projects }: Props) {
                     variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } }}
                     className="border-b border-line"
                   >
-                    <Link
+                    <SectionLink
                       href={href(id)}
                       onClick={() => setOpen(false)}
                       className="flex items-center justify-between py-4 font-display text-2xl font-medium"
                     >
                       {id === "contact" ? nav.contact : id === "partnerships" ? nav.partnerships : labels[id]}
                       <DirArrow className="size-5 text-accent" />
-                    </Link>
+                    </SectionLink>
                     {id === "projects" && (
                       <div className="grid gap-2 pb-4">
                         {projectSlugs.map((slug) => (
@@ -263,6 +266,7 @@ export function Header({ locale, nav, projects }: Props) {
                   <Mail className="size-4 text-accent" />
                   {CONTACT_EMAIL}
                 </a>
+                <SocialLinks labels={social} />
               </div>
             </nav>
           </motion.div>

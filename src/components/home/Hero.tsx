@@ -1,5 +1,6 @@
 import { Award, CalendarDays, ChevronDown } from "lucide-react";
 import { HeroGlobe } from "@/components/globe/HeroGlobe";
+import { SectionLink } from "@/components/layout/SectionLink";
 import { ButtonLink } from "@/components/ui/Button";
 import { CircuitTraces } from "@/components/ui/CircuitTraces";
 import type { Dictionary } from "@/i18n/get-dictionary";
@@ -94,14 +95,14 @@ export function Hero({ hero }: { hero: Dictionary["hero"] }) {
         </div>
       </div>
 
-      <a
+      <SectionLink
         href="#snapshot"
         className="hero-anim absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 text-xs text-muted transition-colors hover:text-fg lg:flex"
         style={d(1.3)}
       >
         {hero.scroll}
         <ChevronDown className="size-4 animate-bounce" aria-hidden />
-      </a>
+      </SectionLink>
     </section>
   );
 }

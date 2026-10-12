@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { SectionLink } from "./SectionLink";
 import { ArrowUp, Mail, MapPin } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
+import { SocialLinks } from "@/components/brand/SocialLinks";
 import { CircuitTraces } from "@/components/ui/CircuitTraces";
 import { CONTACT_EMAIL, projectSlugs } from "@/data/projects";
 import type { Locale } from "@/i18n/config";
@@ -8,7 +10,7 @@ import type { Dictionary } from "@/i18n/get-dictionary";
 import { currentYear } from "@/lib/year";
 
 export async function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
-  const { footer, nav, contact, projects } = dict;
+  const { footer, nav, contact, projects, social } = dict;
   const home = `/${locale}`;
   const links = [
     { id: "", label: nav.home },
@@ -43,9 +45,9 @@ export async function Footer({ locale, dict }: { locale: Locale; dict: Dictionar
             <ul className="mt-4 space-y-2.5 text-sm">
               {links.map((l) => (
                 <li key={l.id || "home"}>
-                  <Link href={l.id ? `${home}#${l.id}` : home} className="text-muted transition-colors hover:text-fg">
+                  <SectionLink href={l.id ? `${home}#${l.id}` : home} className="text-muted transition-colors hover:text-fg">
                     {l.label}
-                  </Link>
+                  </SectionLink>
                 </li>
               ))}
             </ul>
@@ -78,19 +80,21 @@ export async function Footer({ locale, dict }: { locale: Locale; dict: Dictionar
                 {contact.location}
               </li>
             </ul>
+            <p className="mt-6 text-sm font-semibold text-accent">{social.title}</p>
+            <SocialLinks labels={social} className="mt-3" />
           </div>
         </div>
         <div className="mt-14 flex flex-col-reverse items-start justify-between gap-4 border-t border-line pt-6 text-sm text-muted sm:flex-row sm:items-center">
           <p>
             <bdi dir="ltr">© {year} SOUL</bdi> — {footer.rights}
           </p>
-          <a
+          <SectionLink
             href="#top"
             className="group inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 transition-colors hover:border-sky/60 hover:text-fg"
           >
             {footer.backToTop}
             <ArrowUp className="size-4 transition-transform group-hover:-translate-y-0.5" aria-hidden />
-          </a>
+          </SectionLink>
         </div>
       </div>
     </footer>

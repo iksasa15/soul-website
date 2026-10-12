@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowLeft } from "lucide-react";
 import { TopicLink } from "@/components/contact/TopicLink";
+import { SectionLink } from "@/components/layout/SectionLink";
 import { DirArrow } from "@/components/ui/Button";
 import { CircuitTraces } from "@/components/ui/CircuitTraces";
 import type { ProjectSlug } from "@/data/projects";
@@ -69,13 +70,13 @@ export function ProjectHero({
             </div>
             <div className="hero-anim mt-8 flex flex-wrap gap-3" style={d(0.36)}>
               {demoHref && (
-                <a
+                <SectionLink
                   href={demoHref}
                   className="group inline-flex h-12 items-center gap-2 rounded-full bg-gradient-to-br from-sky to-[#0a6fd6] px-6 text-sm font-semibold text-white shadow-[0_10px_30px_-10px_rgb(0_174_239/0.7)] transition-transform hover:-translate-y-0.5"
                 >
                   {demoLabel}
                   <DirArrow className="size-4" />
-                </a>
+                </SectionLink>
               )}
               <TopicLink
                 locale={locale}
